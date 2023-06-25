@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.oye.moviepedia.R
 import com.oye.moviepedia.databinding.FragmentUserBinding
+import com.oye.moviepedia.domain.entities.Playlist
 import com.oye.moviepedia.domain.uses_cases.LikedMovieDataError
 import com.oye.moviepedia.domain.uses_cases.LikedMovieError
 import com.oye.moviepedia.domain.uses_cases.LikedMovieSuccess
@@ -46,6 +47,12 @@ class UserFragment : Fragment() {
         }
     }
 
+    private val playlistList = ArrayList<ListPlaylistItem>(4).apply {
+        repeat(4) {
+            add(ListPlaylistItem("", mutableListOf()))
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -64,11 +71,16 @@ class UserFragment : Fragment() {
 
         val recyclerView = binding.recyclerLikedMovies
         val linearLayoutManager = LinearLayoutManager(container?.context)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView.layoutManager = linearLayoutManager
 
+        val recyclerViewPlaylist = binding.recyclerPlaylist
+        val playlistLinearLayoutManager = LinearLayoutManager(container?.context)
+        recyclerViewPlaylist.layoutManager = playlistLinearLayoutManager
+
         movieList.ensureCapacity(4)
+        playlistList.ensureCapacity(4)
         initLikedMovies()
+        initPlaylist()
         val buttonAddPlaylist = binding.addButtonPlaylist
         buttonAddPlaylist.setOnClickListener {
             onAddButtonClick()
@@ -83,7 +95,7 @@ class UserFragment : Fragment() {
                 is LikedMovieSuccess -> {
                     val movies = it.movies.map { e -> MovieItem(e.title, e.posterUrl, e.director) }
                         .toMutableList()
-                    movieList[0] = ListMovieItem(getString(R.string.liked_new_movies), movies)
+                    movieList.add(ListMovieItem(getString(R.string.liked_new_movies), movies))
                     binding.recyclerLikedMovies.adapter = ListMovieListAdapter(movieList, activity)
                 }
 
@@ -99,6 +111,19 @@ class UserFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun initPlaylist(){
+        val exemple_playlists = listOf(
+            Playlist("https://cdn-icons-png.flaticon.com/512/2798/2798007.png", "Playlist 1"),
+            Playlist("https://cdn-icons-png.flaticon.com/512/2798/2798007.png", "Playlist 2"),
+            Playlist("https://cdn-icons-png.flaticon.com/512/2798/2798007.png", "Playlist 3"),
+            Playlist("https://cdn-icons-png.flaticon.com/512/2798/2798007.png", "Playlist 4")
+        )
+        val playlists = exemple_playlists.map { e -> PlaylistItem(e.posterUrl, e.name, "Films : 5") }
+            .toMutableList()
+        playlistList.add(ListPlaylistItem(getString(R.string.user_playlist), playlists))
+        binding.recyclerPlaylist.adapter = ListPlaylistListAdapter(playlistList, activity)
     }
 
     private fun onAddButtonClick() {

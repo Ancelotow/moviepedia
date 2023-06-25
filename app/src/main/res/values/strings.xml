@@ -12,7 +12,9 @@
     <string name="home_movies_popular">Populaire</string>
 
     <!-- User-->
-    <string name="liked_new_movies">Films favoris</string>
+    <string name="liked_new_movies">Mes favoris</string>
+    <string name="user_playlist">Ma liste</string>
+
 
     <!-- Item movie -->
     <string name="item_movie_director">de %s</string>
